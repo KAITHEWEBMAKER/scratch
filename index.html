@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My DIY Scratch</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        header { background: #4C97FF; color: white; padding: 10px; font-weight: bold; }
+        #main { display: flex; flex: 1; }
+        #blocklyDiv { flex: 2; border-right: 2px solid #ccc; }
+        #stage { flex: 1; background: white; position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        #sprite { font-size: 80px; position: absolute; transition: all 0.2s; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .controls { position: absolute; top: 10px; left: 10px; z-index: 10; }
+        button { cursor: pointer; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<header>MY SCRATCH CLONE</header>
+
+<div id="main">
+    <div id="blocklyDiv"></div>
+
+    <div id="stage">
+        <div class="controls">
+            <button onclick="runCode()">▶ RUN CODE</button>
+        </div>
+        <div id="sprite">🐱</div>
+    </div>
+</div>
+
+<xml id="toolbox" style="display: none">
+    <category name="Motion" colour="210">
+        <block type="move_x"></block>
+        <block type="rotate"></block>
+    </category>
+</xml>
+
+<script>
+    // 1. Define custom blocks
+    Blockly.Blocks['move_x'] = {
+        init: function() {
+            this.appendDummyInput().appendField("Move Right 20 steps");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(210);
+        }
+    };
+
+    Blockly.Blocks['rotate'] = {
+        init: function() {
+            this.appendDummyInput().appendField("Turn 15 degrees");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(210);
+        }
+    };
+
+    // 2. Setup the workspace
+    var workspace = Blockly.inject('blocklyDiv', {
+        toolbox: document.getElementById('toolbox'),
+        scrollbars: true
+    });
+
+    // 3. Logic to make the Sprite move
+    var sprite = document.getElementById('sprite');
+    var currentLeft = 50;
+    var currentRotation = 0;
+
+    function runCode() {
+        // We get all blocks currently in the workspace
+        var blocks = workspace.getAllBlocks(false);
+        
+        blocks.forEach((block, index) => {
+            setTimeout(() => {
+                if (block.type === 'move_x') {
+                    currentLeft += 40;
+                    sprite.style.left = currentLeft + "px";
+                } else if (block.type === 'rotate') {
+                    currentRotation += 15;
+                    sprite.style.transform = `translate(-50%, -50%) rotate(${currentRotation}deg)`;
+                }
+            }, index * 300); // Small delay so you can see it move
+        });
+    }
+</script>
+
+</body>
+</html>
